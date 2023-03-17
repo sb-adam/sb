@@ -4,10 +4,12 @@ from api.endpoints import api_blueprint
 import config
 from flask_sqlalchemy import SQLAlchemy
 from api.database import db
+from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 app.config.from_object(config.Config)
 db.init_app(app)
+jwt = JWTManager(app)
 # CORS(app)
 
 app.register_blueprint(api_blueprint, url_prefix='/api/v1')

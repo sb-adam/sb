@@ -7,6 +7,9 @@ class Config:
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY") or "your-jwt-secret-key"
     JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour in seconds
     JWT_REFRESH_TOKEN_EXPIRES = 2592000  # 30 days in seconds
+    JWT_TOKEN_LOCATION = ['headers', 'cookies']
+    JWT_HEADER_NAME = 'Authorization'
+    JWT_HEADER_TYPE = "Bearer"
     DEBUG = True
 
 class DevelopmentConfig(Config):

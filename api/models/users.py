@@ -36,3 +36,8 @@ class User(db.Model):
         """
         db.session.add(self)
         db.session.commit()
+
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        db.session.commit()

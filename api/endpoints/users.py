@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from api.models.users import User
 from api.utils.auth import require_auth, require_role
+from flask_jwt_extended import get_jwt_identity
 from api.schemas.users import UserSchema
 
 users_blueprint = Blueprint("users", __name__)
@@ -27,12 +28,12 @@ def create_user():
     
     return user_schema.dump(new_user), 201
 
-@users_blueprint.route("/users", methods=["GET"])
-@require_auth
-# @require_role([UserRole.MODERATOR, UserRole.ADMIN])
-def get_all_users():
-    users = User.query.all()
-    return user_schema.jsonify(users, many=True), 200
+# @users_blueprint.route("/users", methods=["GET"])
+# @require_auth
+# # @require_role([UserRole.MODERATOR, UserRole.ADMIN])
+# def get_all_users():
+#     users = User.query.all()
+#     return user_schema.jsonify(users, many=True), 200
 
 
 @users_blueprint.route("/users/<int:user_id>", methods=["GET"])
@@ -40,7 +41,7 @@ def get_all_users():
 def get_user(user_id):
     user = User.query.get(user_id)
     if user:
-        return user_schema.jsonify(user), 200
+        return user_schema.dump(user), 200
     else:
         return jsonify({"error": "User not found"}), 404
 
@@ -50,21 +51,27 @@ def get_user(user_id):
 def update_user(user_id):
     user_data = request.get_json()
     user = User.query.get(user_id)
+
+    # Check if user is updating their own profile
+    current_user_id = get_jwt_identity()
+    if current_user_id != user_id:
+        return jsonify({"error": "You are not authorized to update this user's profile"}), 401
+
     if user:
         user.update(**user_data)
-        return user_schema.jsonify(user), 200
+        return user_schema.dump(user), 200
     else:
         return jsonify({"error": "User not found"}), 404
 
 
-@users_blueprint.route("/users/<int:user_id>", methods=["DELETE"])
-@require_auth
-# @require_role([UserRole.MODERATOR, UserRole.ADMIN])
-def delete_user(user_id):
-    user = User.query.get(user_id)
-    if user:
-        user.delete()
-        return jsonify({"message": "User deleted"}), 200
-    else:
-        return jsonify({"error": "User not found"}), 404
+# @users_blueprint.route("/users/<int:user_id>", methods=["DELETE"])
+# @require_auth
+# # @require_role([UserRole.MODERATOR, UserRole.ADMIN])
+# def delete_user(user_id):
+#     user = User.query.get(user_id)
+#     if user:
+#         user.delete()
+#         return jsonify({"message": "User deleted"}), 200
+#     else:
+#         return jsonify({"error": "User not found"}), 404
 
