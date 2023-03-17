@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from api.models.users import User
-from api.utils.auth import require_auth, require_admin
+from api.utils.auth import require_auth, require_role
 from api.schemas.users import UserSchema
 
 users_blueprint = Blueprint("users", __name__)
@@ -10,14 +10,26 @@ user_schema = UserSchema()
 @users_blueprint.route("/users", methods=["POST"])
 def create_user():
     user_data = request.get_json()
+    
+    # Check if user with same email exists
+    existing_user = User.query.filter_by(email=user_data["email"]).first()
+    if existing_user:
+        return jsonify({"error": "User with this email or username already exists"}), 400
+    
+    # Check if user with same username exists
+    existing_user = User.query.filter_by(username=user_data["username"]).first()
+    if existing_user:
+        return jsonify({"error": "User with this email or username already exists"}), 400
+    
+    # Create new user
     new_user = User(**user_data)
     new_user.save()
-    return user_schema.jsonify(new_user), 201
-
+    
+    return user_schema.dump(new_user), 201
 
 @users_blueprint.route("/users", methods=["GET"])
 @require_auth
-@require_admin
+# @require_role([UserRole.MODERATOR, UserRole.ADMIN])
 def get_all_users():
     users = User.query.all()
     return user_schema.jsonify(users, many=True), 200
@@ -47,7 +59,7 @@ def update_user(user_id):
 
 @users_blueprint.route("/users/<int:user_id>", methods=["DELETE"])
 @require_auth
-@require_admin
+# @require_role([UserRole.MODERATOR, UserRole.ADMIN])
 def delete_user(user_id):
     user = User.query.get(user_id)
     if user:

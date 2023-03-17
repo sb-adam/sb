@@ -1,9 +1,11 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from database import Base
+from ..database import Base, db
+from api.models.profiles import Profile
+from api.models.user_roles import UserRole
 
-class User(Base):
+class User(db.Model):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
@@ -15,7 +17,7 @@ class User(Base):
     is_banned = Column(Boolean, default=False)
 
     profile = relationship("Profile", uselist=False, back_populates="user")
-    roles = relationship("UserRole", back_populates="user")
+    user_roles = relationship("UserRole", back_populates="user")
 
     def __init__(self, username, email, password):
         self.username = username
@@ -27,3 +29,10 @@ class User(Base):
 
     def ban(self):
         self.is_banned = True
+
+    def save(self):
+        """
+        Saves the user to the database.
+        """
+        db.session.add(self)
+        db.session.commit()

@@ -7,6 +7,7 @@ class Config:
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY") or "your-jwt-secret-key"
     JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour in seconds
     JWT_REFRESH_TOKEN_EXPIRES = 2592000  # 30 days in seconds
+    DEBUG = True
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -17,5 +18,6 @@ class ProductionConfig(Config):
 config = {
     "development": DevelopmentConfig,
     "production": ProductionConfig,
-    "default": DevelopmentConfig
+    "default": DevelopmentConfig,
+    "test": DevelopmentConfig
 }

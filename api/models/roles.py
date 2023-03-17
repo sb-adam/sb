@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String
-from database import Base
+from ..database import Base, db
 
-class Role(Base):
+class Role(db.Model):
     __tablename__ = "roles"
 
     id = Column(Integer, primary_key=True, index=True)

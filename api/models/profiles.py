@@ -1,9 +1,9 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from database import Base
+from ..database import Base, db
 
-class Profile(Base):
+class Profile(db.Model):
     __tablename__ = 'profiles'
 
     id = Column(Integer, primary_key=True)

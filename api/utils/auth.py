@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, jsonify
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
-from models.users import User, UserRole
+from api.models.users import User
 
 def require_auth(fn):
     @wraps(fn)
