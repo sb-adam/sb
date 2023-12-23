@@ -7,6 +7,7 @@ class CommentSchema(Schema):
     post_id = fields.Integer(required=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
+    text = fields.String(required=True)
 
 class CommentUpdateSchema(Schema):
     content = fields.String(validate=validate.Length(min=1))

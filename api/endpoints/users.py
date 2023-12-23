@@ -38,7 +38,7 @@ def create_user():
 
 @users_blueprint.route("/users/<int:user_id>", methods=["GET"])
 @require_auth
-def get_user(user_id):
+def get_user(user_id, authenticated_user_id):
     user = User.query.get(user_id)
     if user:
         return user_schema.dump(user), 200
@@ -48,7 +48,7 @@ def get_user(user_id):
 
 @users_blueprint.route("/users/<int:user_id>", methods=["PUT"])
 @require_auth
-def update_user(user_id):
+def update_user(user_id, authenticated_user_id):
     user_data = request.get_json()
     user = User.query.get(user_id)
 

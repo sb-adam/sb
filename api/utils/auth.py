@@ -7,8 +7,10 @@ def require_auth(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
-        return fn(*args, **kwargs)
+        user_id = get_jwt_identity()  # Extract user ID from the token
+        return fn(*args, **kwargs, authenticated_user_id=user_id)  # Pass user ID to the function
     return wrapper
+
 
 def require_role(allowed_roles):
     def decorator(fn):

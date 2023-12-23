@@ -4,8 +4,8 @@ from .users import UserSchema
 # from .user_roles import UserRole
 # from .user_tags import UserTag
 # from .user_followers import UserFollower
-# from .content import Content
-# from .comments import Comment
+from .content import ContentSchema
+from .comments import CommentSchema
 # from .replies import Reply
 # from .reports import Report
 # from .ratings import Rating
@@ -19,8 +19,8 @@ __all__ = [
     # "UserRole",
     # "UserTag",
     # "UserFollower",
-    # "Content",
-    # "Comment",
+    "ContentSchema",
+    "CommentSchema",
     # "Reply",
     # "Report",
     # "Rating",

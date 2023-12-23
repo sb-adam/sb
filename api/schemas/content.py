@@ -4,6 +4,7 @@ class ContentSchema(Schema):
     id = fields.Integer(dump_only=True)
     title = fields.String(required=True, validate=validate.Length(min=1, max=255))
     description = fields.String(required=True, validate=validate.Length(min=1, max=500))
+    content_type = fields.String(required=True)
     url = fields.Url(required=True)
     user_id = fields.Integer(required=True)
     created_at = fields.DateTime(dump_only=True)

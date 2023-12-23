@@ -15,6 +15,9 @@ class User(db.Model):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_banned = Column(Boolean, default=False)
+    content = relationship("Content", back_populates="user")
+
+    comments = relationship("Comment", back_populates="user")
 
     profile = relationship("Profile", uselist=False, back_populates="user")
     user_roles = relationship("UserRole", back_populates="user")

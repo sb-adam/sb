@@ -78,6 +78,7 @@ def test_create_user(client):
 
 
 def test_get_user(client):
+    global user_id
     # Create a new user
     data = {
         "username": "test_user",
@@ -89,7 +90,7 @@ def test_get_user(client):
 
     # Get the user by ID
     user_id = response.json["id"]
-    access_token = create_access_token(identity=data)
+    access_token = create_access_token(identity=user_id)
     headers = {"Authorization": f"Bearer {access_token}"}
     response = client.get(f"/api/users/{user_id}", headers=headers)
     assert response.status_code == 200

@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from database import Base
+from ..database import Base, db
 import datetime
 
-class Comment(Base):
+class Comment(db.Model):
     __tablename__ = "comments"
 
     id = Column(Integer, primary_key=True, index=True)

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from ..models import Content
 from ..schemas import ContentSchema
 from ..utils.auth import require_auth
+from ..database import db
 
 content_blueprint = Blueprint("content", __name__)
 content_schema = ContentSchema()
@@ -10,14 +11,17 @@ content_schema = ContentSchema()
 @require_auth
 def create_content(authenticated_user_id):
     data = request.get_json()
-    content = Content(user_id=authenticated_user_id, title=data["title"], description=data["description"], file_url=data["file_url"])
+    content = Content(user_id=authenticated_user_id, title=data["title"], description=data["description"], file_url=data["file_url"], content_type=data["content_type"])
     content.save()
-    return content_schema.jsonify(content), 201
+    result = content_schema.dump(content)  # Use dump here
+    return jsonify(result), 201  # Use Flask's jsonify to return a response
+
 
 @content_blueprint.route("/content", methods=["GET"])
 def get_content():
     content_list = Content.query.all()
-    return content_schema.jsonify(content_list, many=True), 200
+    result = content_schema.dump(content_list, many=True)  # Use dump here with many=True for a list of objects
+    return jsonify(result), 200
 
 @content_blueprint.route("/content/<int:content_id>", methods=["PUT"])
 @require_auth
@@ -34,7 +38,8 @@ def update_content(content_id, authenticated_user_id):
     content.description = data["description"]
     content.file_url = data["file_url"]
     content.save()
-    return content_schema.jsonify(content), 200
+    result = content_schema.dump(content)
+    return jsonify(result), 200 # Use Flask's jsonify to return a response
 
 @content_blueprint.route("/content/<int:content_id>", methods=["DELETE"])
 @require_auth
@@ -46,5 +51,7 @@ def delete_content(content_id, authenticated_user_id):
     if content.user_id != authenticated_user_id:
         return jsonify({"error": "You are not authorized to delete this content"}), 403
 
-    content.delete()
+    db.session.delete(content)  # Use db.session.delete() here
+    db.session.commit()  # Commit the changes to the database
+
     return jsonify({"message": "Content deleted"}), 200
